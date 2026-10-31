@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SHOPA KING - Order Online</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f5f6f8;color:#252525}
+button{cursor:pointer}
+#loader{position:fixed;inset:0;background:#fff;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:.4s}
+.loader-logo{font-size:34px;font-weight:900;color:#e85b32;letter-spacing:1px}
+.loader-logo span{color:#252525}
+.spinner{width:38px;height:38px;border:4px solid #eee;border-top:4px solid #e85b32;border-radius:50%;margin-top:25px;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+header{background:white;padding:16px 6%;display:flex;justify-content:space-between;align-items:center;box-shadow:0 2px 10px #0000000d;position:sticky;top:0;z-index:100}
+.logo{font-size:25px;font-weight:900;color:#e85b32}.logo span{color:#252525}
+.header-btn,.back-btn{background:#fff0eb;color:#e85b32;padding:10px 15px;border-radius:8px;font-weight:bold;border:0}
+.page{max-width:1100px;margin:auto;padding:25px 18px}.hidden{display:none!important}
+.hero{background:linear-gradient(120deg,#e85b32,#f28a42);color:white;padding:32px 25px;border-radius:13px;margin-bottom:28px}
+.hero h1{font-size:30px;margin-bottom:10px}.hero p{font-size:15px;opacity:.95}
+.section-title{font-size:23px;margin-bottom:20px}
+.products{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.card{background:white;border-radius:12px;overflow:hidden;border:1px solid #eee;transition:.2s}
+.card:hover{transform:translateY(-3px);box-shadow:0 5px 18px #00000012}
+.card img{width:100%;height:180px;object-fit:contain;background:#fafafa;padding:10px}
+.details{padding:15px}.details h3{font-size:16px;margin-bottom:9px}
+.description{font-size:13px;color:#777;line-height:1.5;min-height:48px}
+.price{font-size:20px;font-weight:bold;margin:12px 0;color:#292929}
+.add-btn,.confirm-btn,.view-cart,.continue-btn,.admin-btn{background:#e85b32;color:white;border:0;padding:12px 14px;border-radius:7px;font-weight:bold;width:100%}
+.add-btn:hover,.confirm-btn:hover{background:#cb4724}
+.add-btn:disabled{background:#999;cursor:not-allowed}
+.stock-label{font-size:12px;color:#b33;font-weight:bold;margin:5px 0}
+.bottom-cart{position:fixed;bottom:0;left:0;width:100%;background:white;padding:13px 6%;box-shadow:0 -3px 15px #00000015;display:none;z-index:200}
+.bottom-inner{max-width:1050px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:15px}
+.view-cart{width:auto;padding:14px 25px}
+.back-btn{margin-bottom:20px}
+.cart-box,.checkout-box,.admin-box{background:white;border-radius:12px;padding:22px;margin-bottom:20px;border:1px solid #eee}
+.cart-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 0;border-bottom:1px solid #eee}
+.qty-controls{display:flex;align-items:center;gap:9px}
+.qty-controls button{width:30px;height:30px;border:0;border-radius:6px;background:#fff0eb;color:#e85b32;font-weight:bold}
+.remove{border:0;background:none;color:#e85b32;font-size:17px}
+.summary{padding-top:15px}.summary div{display:flex;justify-content:space-between;margin:12px 0;font-size:15px}
+.grand{font-size:21px!important;font-weight:bold;color:#e85b32;border-top:1px solid #eee;padding-top:15px}
+label{font-weight:bold;font-size:14px;display:block;margin-top:16px}
+input,textarea,select{width:100%;padding:13px;border:1px solid #ddd;border-radius:7px;margin-top:8px;font-family:Arial,sans-serif;font-size:14px;background:white;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#e85b32}
+textarea{min-height:90px;resize:vertical}
+.confirm-btn{padding:15px;font-size:16px;margin-top:22px}
+#success{background:white;border-radius:13px;padding:40px 20px;text-align:center;border:1px solid #eee}
+.success-icon{font-size:55px;margin-bottom:15px}#success h2{color:#239b58;margin-bottom:12px}
+.continue-btn{width:auto;padding:13px 25px;margin-top:20px}
+.notice{background:#fff5ef;border:1px solid #ffd8c8;color:#8d3b20;padding:12px;border-radius:8px;margin:12px 0;font-size:13px;line-height:1.5}
+.status{padding:12px;border-radius:8px;background:#f1f1f1;margin:12px 0;font-weight:bold}
+.admin-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.admin-product{border:1px solid #eee;border-radius:9px;padding:13px;margin:10px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.admin-product button{border:0;border-radius:6px;padding:8px 10px;margin:3px;background:#fff0eb;color:#b44828;font-weight:bold}
+footer{background:white;text-align:center;padding:25px;color:#777;margin-top:40px;font-size:13px}
+footer h2{color:#e85b32;margin-bottom:8px}
+@media(max-width:600px){
+header{padding:14px 5%}.logo{font-size:21px}.page{padding:20px 13px}.hero{padding:25px 18px}.hero h1{font-size:24px}
+.products{gap:10px}.card img{height:130px}.details{padding:11px}.details h3{font-size:14px}.description{font-size:12px;min-height:58px}
+.price{font-size:18px}.add-btn{font-size:12px;padding:10px 5px}.cart-box,.checkout-box,.admin-box{padding:15px}
+.bottom-inner{gap:8px}.view-cart{padding:12px 15px;font-size:12px}.cart-row{font-size:13px;flex-wrap:wrap}
+.admin-grid{grid-template-columns:1fr}
+}
+</style>
+<!-- Google Maps: replace YOUR_GOOGLE_MAPS_API_KEY with your own enabled API key -->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+</head>
+<body>
+<div id="loader"><div class="loader-logo">SHOPA <span>KING.</span></div><p style="margin-top:10px;color:#777;font-size:13px">Fresh Snacks. Great Taste.</p><div class="spinner"></div></div>
+<header><div class="logo">SHOPA <span>KING.</span></div><button class="header-btn" onclick="showMenu()">🏠 Home</button></header>
+
+<div id="menuPage" class="page">
+  <div class="hero"><h1>Hungry? Order Now! 🍟</h1><p>Your favourite snacks, fresh and delicious.</p></div>
+  <div id="shopClosed" class="notice hidden"><strong>SHOPA KING is currently closed.</strong><br>Orders are temporarily unavailable. Please visit again later. ❤️</div>
+  <h2 class="section-title">🔥 Our Menu</h2>
+  <div class="products" id="products"></div>
+</div>
+
+<div class="bottom-cart" id="bottomCart"><div class="bottom-inner"><div><strong id="cartCount">0 Items</strong><div id="cartBarTotal" style="color:#777;font-size:13px">Rs. 0</div></div><button class="view-cart" onclick="showCheckout()">VIEW CART →</button></div></div>
+
+<div id="checkoutPage" class="page hidden">
+<button class="back-btn" onclick="showMenu()">← Back to Menu</button>
+<h2 class="section-title">🛒 Your Cart</h2>
+<div class="cart-box"><div id="cartItems">Your cart is empty.</div><div class="summary">
+<div><span>Subtotal</span><strong id="subtotal">Rs. 0</strong></div>
+<div><span>Road Distance</span><strong id="distanceDisplay">Not selected</strong></div>
+<div><span>Delivery Charges</span><strong id="deliveryDisplay">Rs. 0</strong></div>
+<div class="grand"><span>Total</span><strong id="grandTotal">Rs. 0</strong></div>
+</div></div>
+<h2 class="section-title">📍 Delivery Details</h2>
+<div class="checkout-box">
+<form id="orderForm" action="jafferandibrahim@gmail.com" method="POST" target="orderFrame" onsubmit="return prepareOrder()">
+<input type="hidden" name="_subject" value="New SHOPA KING Order!"><input type="hidden" name="_template" value="table"><input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="Order Details" id="orderDetails"><input type="hidden" name="Subtotal" id="orderSubtotal">
+<input type="hidden" name="Delivery Charges" id="orderDelivery"><input type="hidden" name="Grand Total" id="orderTotal">
+<input type="hidden" name="Road Distance" id="orderDistance"><input type="hidden" name="Customer Location" id="orderLocation">
+<label>Full Name</label><input name="Customer Name" required placeholder="Enter your full name">
+<label>Mobile Number</label><input name="Phone Number" type="tel" required placeholder="03XXXXXXXXX">
+<label>Complete Delivery Address</label><textarea name="Address" required placeholder="House number, street, area..."></textarea>
+<div class="notice">📍 Apni current location share karo. Google Maps tumhari shop se road distance calculate karega. Delivery: Rs. 20 base + Rs. 50 per started kilometer.</div>
+<button type="button" class="admin-btn" onclick="getCustomerLocation()">📍 USE MY CURRENT LOCATION</button>
+<p id="locationStatus" style="font-size:13px;color:#666;margin-top:9px">Location abhi select nahi hui.</p>
+<button class="confirm-btn" type="submit">CONFIRM MY ORDER 🚀</button>
+<p style="text-align:center;color:#777;font-size:12px;margin-top:13px">Please check your address and mobile number before ordering.</p>
+</form></div>
+<div id="success" class="hidden"><div class="success-icon">🎉</div><h2>Thank You For Ordering!</h2><p>Your order has been received.</p><p style="margin-top:10px;color:#666">Aapka order aapko jaldi mil jayega. ❤️</p><button class="continue-btn" onclick="newOrder()">ORDER AGAIN</button></div>
+</div>
+
+<div id="adminPage" class="page hidden">
+<button class="back-btn" onclick="showMenu()">← Back to Shop</button>
+<h2 class="section-title">🔐 SHOPA KING Admin</h2>
+<div id="adminLogin" class="admin-box">
+<h3>Admin Login</h3><label>Password</label><input id="adminPassword" type="password" placeholder="Enter admin password">
+<button class="confirm-btn" onclick="loginAdmin()">LOGIN</button><p id="loginError" style="color:#b33;margin-top:10px"></p>
+</div>
+<div id="adminDashboard" class="hidden">
+<div class="admin-box"><h3>Shop Status</h3><p id="adminShopStatus" class="status"></p><button class="admin-btn" onclick="toggleShop()">TOGGLE SHOP OPEN / CLOSED</button></div>
+<div class="admin-box"><h3>Add New Product</h3>
+<label>Product Name</label><input id="newName" placeholder="Product name">
+<div class="admin-grid"><div><label>Price (Rs.)</label><input id="newPrice" type="number" min="1" placeholder="Price"></div><div><label>Image file / URL</label><input id="newImage" placeholder="product.jpg"></div></div>
+<label>Description</label><textarea id="newDescription" placeholder="Product description"></textarea>
+<button class="confirm-btn" onclick="addProductAdmin()">ADD PRODUCT</button>
+</div>
+<div class="admin-box"><h3>Manage Menu</h3><div id="adminProducts"></div></div>
+<div class="notice">Admin changes are saved in this browser only in this HTML-only version. To sync changes across all customers/devices, connect a secure online database and authentication.</div>
+<button class="back-btn" onclick="logoutAdmin()">LOG OUT</button>
+</div>
+</div>
+
+<iframe name="orderFrame" style="display:none"></iframe>
+<footer><h2>SHOPA KING.</h2><p>Good Snacks. Great Taste. ❤️</p><p style="margin-top:10px">Thank you for choosing us!</p></footer>
+
+<script>
+const ADMIN_PASSWORD = "jaffer";
+const SHOP_LAT = 24.8579336;
+const SHOP_LNG = 66.9964188;
+const BASE_DELIVERY = 20;
+const PER_KM = 50;
+const MAPS_API_KEY_CONFIGURED = !document.querySelector('script[src*="YOUR_GOOGLE_MAPS_API_KEY"]')?.src.includes("YOUR_GOOGLE_MAPS_API_KEY");
+
+const defaultProducts = [
+ {id:1,name:"Jonoon Snacks",price:120,image:"jonoon.jpg",description:"1 Packet. Crunchy, delicious and full of flavour! 😋",stock:true},
+ {id:2,name:"MFC Regular Fries",price:60,image:"mfc-fries.jpg",description:"1 Dabba. Golden, crispy and tasty fries!",stock:true},
+ {id:3,name:"MFC Special Fries",price:120,image:"mfc-fries.jpg",description:"1 Dabba. Special flavour and delicious taste!",stock:true},
+ {id:4,name:"☠️ 51 Masala Dangerous Fries",price:400,image:"mfc-fries.jpg",description:"THE SPICY CHALLENGE! 🔥 Can you handle the heat?",stock:true}
+];
+function readStore(key,fallback){try{const v=localStorage.getItem(key);return v?JSON.parse(v):fallback}catch(e){return fallback}}
+let products=readStore("shopaking_products",defaultProducts);
+let shopOpen=readStore("shopaking_open",true);
+let cart=[];
+let customerCoords=null;
+let roadDistanceKm=null;
+let deliveryFee=0;
+
+window.addEventListener('load',()=>{setTimeout(()=>{document.getElementById('loader').style.opacity='0';setTimeout(()=>document.getElementById('loader').style.display='none',400)},700);renderProducts();updateCart();routePage();});
+function saveStore(){localStorage.setItem("shopaking_products",JSON.stringify(products));localStorage.setItem("shopaking_open",JSON.stringify(shopOpen))}
+function renderProducts(){
+ const root=document.getElementById('products');
+ root.innerHTML=products.map(p=>`<div class="card"><img src="${escapeAttr(p.image)}" alt="${escapeAttr(p.name)}" onerror="this.style.opacity='.25'"><div class="details"><h3>${escapeHtml(p.name)}</h3><p class="description">${escapeHtml(p.description||"Fresh and delicious!")}</p><div class="price">Rs. ${Number(p.price)}</div>${p.stock?`<button class="add-btn" onclick="add(${Number(p.id)})">ADD TO CART +</button>`:`<div class="stock-label">OUT OF STOCK</div><button class="add-btn" disabled>OUT OF STOCK</button>`}</div></div>`).join('');
+ document.getElementById('shopClosed').classList.toggle('hidden',shopOpen);
+ if(!shopOpen){document.querySelectorAll('.add-btn').forEach(b=>{b.disabled=true;b.textContent='SHOP CLOSED'})}
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function escapeAttr(s){return escapeHtml(s)}
+function add(id){if(!shopOpen){alert('SHOPA KING is currently closed.');return}const p=products.find(x=>x.id===id);if(!p||!p.stock)return;const item=cart.find(x=>x.id===id);if(item)item.qty++;else cart.push({id,name:p.name,price:Number(p.price),qty:1});updateCart()}
+function updateCart(){
+ const box=document.getElementById('cartItems');const subtotal=cart.reduce((s,x)=>s+x.price*x.qty,0);const totalItems=cart.reduce((s,x)=>s+x.qty,0);
+ box.innerHTML=cart.length?cart.map((x,i)=>`<div class="cart-row"><div><strong>${escapeHtml(x.name)}</strong><div style="color:#777;margin-top:5px">Rs. ${x.price} each</div></div><div class="qty-controls"><button type="button" onclick="changeQty(${i},-1)">−</button><strong>${x.qty}</strong><button type="button" onclick="changeQty(${i},1)">+</button><button class="remove" type="button" onclick="removeItem(${i})">✕</button></div><strong>Rs. ${x.price*x.qty}</strong></div>`).join(''):'Your cart is empty.';
+ deliveryFee=roadDistanceKm===null?0:BASE_DELIVERY+Math.ceil(roadDistanceKm)*PER_KM;
+ document.getElementById('subtotal').innerText='Rs. '+subtotal;
+ document.getElementById('distanceDisplay').innerText=roadDistanceKm===null?'Not selected':roadDistanceKm.toFixed(2)+' km';
+ document.getElementById('deliveryDisplay').innerText='Rs. '+deliveryFee;
+ document.getElementById('grandTotal').innerText='Rs. '+(subtotal+deliveryFee);
+ document.getElementById('cartCount').innerText=totalItems+' Items';document.getElementById('cartBarTotal').innerText='Rs. '+subtotal;
+ if(totalItems===0)document.getElementById('bottomCart').style.display='none';
+}
+function changeQty(i,n){cart[i].qty+=n;if(cart[i].qty<=0)cart.splice(i,1);updateCart()}
+function removeItem(i){cart.splice(i,1);updateCart()}
+function showMenu(){document.getElementById('menuPage').classList.remove('hidden');document.getElementById('checkoutPage').classList.add('hidden');document.getElementById('adminPage').classList.add('hidden');window.scrollTo(0,0)}
+function showCheckout(){if(!cart.length){alert('Please add products to your cart!');return}if(!shopOpen){alert('SHOPA KING is currently closed.');return}document.getElementById('menuPage').classList.add('hidden');document.getElementById('adminPage').classList.add('hidden');document.getElementById('checkoutPage').classList.remove('hidden');document.getElementById('bottomCart').style.display='none';updateCart();window.scrollTo(0,0)}
+function routePage(){if(location.pathname.replace(/\/+$/,'').endsWith('/admin')){document.getElementById('menuPage').classList.add('hidden');document.getElementById('adminPage').classList.remove('hidden')}else{showMenu()}}
+function getCustomerLocation(){
+ const status=document.getElementById('locationStatus');
+ if(!navigator.geolocation){status.textContent='Your browser does not support location.';return}
+ status.textContent='Getting your location...';
+ navigator.geolocation.getCurrentPosition(pos=>{
+  customerCoords={lat:pos.coords.latitude,lng:pos.coords.longitude};
+  if(!window.google||!google.maps||!google.maps.DirectionsService){status.textContent='Location mil gayi, lekin Google Maps API key setup nahi hai. Owner ko API key add karni hogi.';return}
+  const service=new google.maps.DirectionsService();
+  service.route({origin:new google.maps.LatLng(SHOP_LAT,SHOP_LNG),destination:new google.maps.LatLng(customerCoords.lat,customerCoords.lng),travelMode:google.maps.TravelMode.DRIVING},(result,statusCode)=>{
+   if(statusCode==='OK'&&result.routes[0].legs[0].distance){
+    const meters=result.routes[0].legs[0].distance.value;roadDistanceKm=meters/1000;deliveryFee=BASE_DELIVERY+Math.ceil(roadDistanceKm)*PER_KM;
+    status.textContent='Location selected! Road distance: '+roadDistanceKm.toFixed(2)+' km. Delivery: Rs. '+deliveryFee+'.';
+    document.getElementById('orderLocation').value=customerCoords.lat+', '+customerCoords.lng;updateCart();
+   }else{roadDistanceKm=null;status.textContent='Road distance calculate nahi ho saka. Address/location dobara check karein.';updateCart()}
+  });
+ },err=>{status.textContent='Location permission nahi mili. Browser settings mein location allow karein.'},{enableHighAccuracy:true,timeout:15000});
+}
+function prepareOrder(){
+ if(!cart.length){alert('Please add products to your cart!');return false}
+ if(!shopOpen){alert('SHOPA KING is currently closed.');return false}
+ if(roadDistanceKm===null){alert('Please share your location first so delivery charges can be calculated.');return false}
+ const subtotal=cart.reduce((s,x)=>s+x.price*x.qty,0);const delivery=BASE_DELIVERY+Math.ceil(roadDistanceKm)*PER_KM;
+ document.getElementById('orderDetails').value=cart.map(x=>x.name+' x '+x.qty+' = Rs. '+x.price*x.qty).join('\n');
+ document.getElementById('orderSubtotal').value='Rs. '+subtotal;document.getElementById('orderDelivery').value='Rs. '+delivery;document.getElementById('orderTotal').value='Rs. '+(subtotal+delivery);document.getElementById('orderDistance').value=roadDistanceKm.toFixed(2)+' km';
+ document.querySelector('#checkoutPage .checkout-box').classList.add('hidden');document.getElementById('success').classList.remove('hidden');window.scrollTo(0,0);return true;
+}
+function newOrder(){cart=[];customerCoords=null;roadDistanceKm=null;deliveryFee=0;document.getElementById('success').classList.add('hidden');document.querySelector('#checkoutPage .checkout-box').classList.remove('hidden');document.getElementById('checkoutPage').classList.add('hidden');document.getElementById('menuPage').classList.remove('hidden');document.querySelector('#orderForm').reset();document.getElementById('locationStatus').textContent='Location abhi select nahi hui.';updateCart();window.scrollTo(0,0)}
+function loginAdmin(){if(document.getElementById('adminPassword').value===ADMIN_PASSWORD){document.getElementById('adminLogin').classList.add('hidden');document.getElementById('adminDashboard').classList.remove('hidden');renderAdmin()}else document.getElementById('loginError').textContent='Wrong password!'}
+function logoutAdmin(){document.getElementById('adminDashboard').classList.add('hidden');document.getElementById('adminLogin').classList.remove('hidden');document.getElementById('adminPassword').value='';}
+function toggleShop(){shopOpen=!shopOpen;saveStore();renderProducts();renderAdmin()}
+function addProductAdmin(){
+ const name=document.getElementById('newName').value.trim(),price=Number(document.getElementById('newPrice').value),image=document.getElementById('newImage').value.trim(),description=document.getElementById('newDescription').value.trim();
+ if(!name||!price||price<1){alert('Product name aur valid price enter karo.');return}
+ products.push({id:Date.now(),name,price,image:image||'mfc-fries.jpg',description,stock:true});saveStore();renderProducts();renderAdmin();
+ ['newName','newPrice','newImage','newDescription'].forEach(id=>document.getElementById(id).value='');
+}
+function renderAdmin(){
+ document.getElementById('adminShopStatus').textContent=shopOpen?'🟢 SHOP IS OPEN':'🔴 SHOP IS CLOSED';
+ document.getElementById('adminProducts').innerHTML=products.map(p=>`<div class="admin-product"><div><strong>${escapeHtml(p.name)}</strong><div style="font-size:13px;color:#777">Rs. ${p.price} · ${p.stock?'In stock':'Out of stock'}</div></div><div><button onclick="toggleStock(${p.id})">${p.stock?'MARK OUT':'MARK IN'}</button><button onclick="editPrice(${p.id})">PRICE</button><button onclick="deleteProduct(${p.id})">DELETE</button></div></div>`).join('');
+}
+function toggleStock(id){const p=products.find(x=>x.id===id);if(p){p.stock=!p.stock;saveStore();renderProducts();renderAdmin()}}
+function editPrice(id){const p=products.find(x=>x.id===id);if(!p)return;const value=prompt('New price for '+p.name,p.price);if(value!==null&&Number(value)>0){p.price=Number(value);saveStore();renderProducts();renderAdmin()}}
+function deleteProduct(id){if(confirm('Delete this product?')){products=products.filter(x=>x.id!==id);saveStore();renderProducts();renderAdmin()}}
+updateCart();
+</script>
+</body>
+</html>
